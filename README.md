@@ -594,3 +594,253 @@ Agradecemos aos professores pelo suporte oferecido para o progresso do projeto.
 </body>
 </html>
 ```
+#__________________________________________
+## App-Loading 4º Semestre de Banco de Dados 
+
+
+## Visão do Projeto</br> <a name="-visao"/></a>
+O projeto realizado está na área de recrutamento de candidatos, na qual consiste na criação de uma api web simples para criação de vaga e busca do candidato, com foco na otimização da seleção. A estruturação de um eficiente processo de recrutamento facilita a seleção de talentos e competências necessárias para a continuidade e o sucesso das instituições.
+</br></br>
+
+## Funcionalidade </br>
+
+O usuário poderá selecionar candidato atráves de filtros, sendo ele: pcd, conhecimento, idioma, vale transporte (vt), nível de escolaridade. Os filtros foram alinhados juntamente com o cliente, sendo fixado o vt < 3 quilômetros da instituição como vt =0. Todos os filtros são ordenados conforme necessidade e relevancia do usuário para a busca do candidado "ideal". Ao criar uma vaga, a mesma irá trazer os candidatos, assim como, a pesquisa isolada dos candidatos também será permitido. 
+
+## Tecnologias Utilizadas</br> <a name="-tecnologias"/></a>
+•    [Python 3.9](https://www.python.org/)</br>
+•    [MySQL](https://www.mysql.com/)</br>
+•    [Flask 2.0](https://flask.palletsprojects.com/en/2.0.x/)</br>
+•    [Postman](https://www.postman.com/)</br>
+
+
+As escolhas das tecnologias foram baseadas em performance e redução de complexidade. A escolha de um banco relacional MySQL possibilitou a criação de indices que aumentaram a performance do próprio banco com um número volumoso de dados, assim como o MySQL se tornou o mais popular banco de dados Open Source do mundo.
+
+## Bibliotecas Utilizadas</br> <a name="-bibliotecas"/></a>
+•    requests </br>
+•    ast</br>
+•    flask_mysqldb</br>
+•    sqlalchemy</br>
+
+As bibliotecas utilizadas facilitaram na comunicação com o banco de dados, assim como cálculos de localização e aproximação dos candidatos. 
+
+
+## Instruções de implementação </br> <a name="-instrucao"/></a>
+
+ > Crie o banco de dados 
+ 1. Utilizar o script SQL que está na pasta "API-Loading/projetointegrador/bd/bd.sql" para ter o modelo do banco.
+ 
+ > Como rodar a aplicação:
+ 1. Alterar as configurações do banco de dados nos arquivos "bd.py" e "app.py"
+ 2. Para [configurar e executar o ambiente virtual](https://www.youtube.com/watch?v=hA2l0TgaZhM), a pasta do ambiente virtual criado para este projeto se encontra na pasta "venv" 
+ 4. Com o ambiente virtual ativado execute o arquivo "app.py"
+ 5. Recomendamos que utilize o software [Postman](https://www.postman.com/downloads/) para testar a rotas disponiveis no projeto.
+
+# Requisitos</br> <a name="-requisitos"/></a>
+## Requisitos Funcionais</br>
+
+· Criar interface de submissão de currículos que recebam, de forma padronizada e adequada ao processo, os candidatos; </br>
+· Busca de candidatos por vagas; </br>
+· Utilizar filtros configuráveis nas buscas de cada vaga; </br>
+
+
+## Requisitos Não Funcionais</br>
+· Arquitetura do BD;</br>
+· Desempenho;</br>
+· Segurança (Safety);</br>
+· Documentação específica;</br>
+
+
+## Rotas Disponíveis <a name="-rotas"/></a>
+
+|  ROTAS  CRUD | METHOD | RESPOSTA |
+|--------|----------|----------|
+| "/insertUsuario" | "POST" | Criação de usuários que são capazes de criar vagas |
+| "/insertVaga | "POST" | Inserção de vaga no banco de dados|
+| "/updateVaga/informe o id" | "PUT" | Update das descrições da vaga |
+| "/dropVaga/informe o id"| "DELETE" | Deletar Vaga |
+| "/filterVaga/informe o id" | "GET" | Filtrar as informações da vaga |
+| "/filterVaga" | "GET" | Listar todas as vagas disponíveis | 
+| "/filterVagaPeso/informe o id" | "GET" | Filtro da vaga retornando os candidatos | 
+| "/insertCandidato" | "POST" | Inserir candidatos |
+| "/updateCandidato/informe o cpf" | "PUT" | Atualização dos dados do candidato |
+| "/dropCandidato/informe o cpf"| "DELETE" | Deletar candidato |
+| "/filterCandidato/cep=informe o cep" | "GET" | Filtra candidatos |
+| "/filterCandidato" | "GET" | Filtrar todos os candidatos | 
+
+## Atribuição Individual
+### - Conecção com o DataBase
+```bash
+from flask import Flask
+from flask_mysqldb import MySQL
+
+app = Flask("JETSOFT")
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = '97855818'
+app.config['MYSQL_DB'] = 'mydb'
+app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+mysql = MySQL(app) 
+
+class DatabaseManager:
+
+    def Insert_Drop(self,query):
+        cursor = mysql.connection.cursor()
+        cursor.execute(query)
+        cursor.connection.commit()
+
+    def Filtrar(self,query):
+        cursor=mysql.connection.cursor()
+        cursor.execute(query)
+        return cursor.fetchall()
+```
+### - Candidato
+```bash
+
+from db import DatabaseManager
+from cepCoords import cepCoord
+from flask import jsonify
+
+class CandidatoDatabase:
+
+#INSERT
+    def insertCandidato(self, lat, long, vars):
+        database = DatabaseManager()
+        
+        query="INSERT INTO candidato (nomeCandidato, cpfCandidato, dataNascimentoCandidato, emailCandidato, pcdCandidato, cepCandidato, latitudeCandidato, longitudeCandidato, telResCandidato, telCelCandidato, nivelEscolaridade) VALUES ('{}', '{}', {}, '{}', {}, '{}', {}, {}, {}, {}, '{}')".format(vars["nomeCandidato"], vars["cpfCandidato"], vars["dataNascimentoCandidato"], vars["emailCandidato"], vars["pcdCandidato"], vars["cepCandidato"], lat, long, vars["telResCandidato"], vars["telCelCandidato"], vars["nivelEsc"])
+        database.Insert_Drop(query)
+        
+        for c in vars:
+            if c == "conhecimento":
+                for i in range(len(vars[c])):
+                    query ="INSERT INTO candidato_conhecimento (idConhecimento, cpfCandidato) VALUES ({}, '{}')".format(vars[c][i], vars["cpfCandidato"])
+                    database.Insert_Drop(query)
+
+        for c in vars:
+            if c == "idioma":
+                for i in range(len(vars[c])):
+                    query ="INSERT INTO candidato_idioma (idIdioma, cpfCandidato) VALUES ({}, '{}')".format(vars[c][i], vars["cpfCandidato"])
+                    database.Insert_Drop(query)
+
+        for c in vars:
+            if c == "experiencia":
+                for i in range(len(vars[c])):
+                    query ="INSERT INTO experiencia_profissional (empresa, cargo, cpfCandidato, tempo) VALUES ('{}', '{}', '{}', {})".format(vars[c][i]["empresa"], vars[c][i]["cargo"], vars["cpfCandidato"], vars[c][i]["tempo"])
+                    database.Insert_Drop(query)
+
+        return True
+
+#DROP
+    def dropCandidato (self, cpf):
+        query = "DELETE FROM candidato WHERE cpfCandidato = '{}'".format(cpf)
+        database = DatabaseManager()
+        database.Insert_Drop(query)
+
+#FILTER
+    def filtrarCandidato(self,latuser,longuser,vars):
+        item = 1    
+        query="select candidato.nomeCandidato,candidato.emailCandidato,(6371 * acos(cos(radians({})) * cos(radians(candidato.latitudeCandidato)) * cos(radians({}) - radians(candidato.longitudeCandidato)) + sin(radians({})) * sin(radians(candidato.latitudeCandidato)) )) AS distance from candidato".format(latuser, longuser, latuser)
+        for x in vars:
+            if x == "conhecimento":
+                query = query + " inner join conhecimento on conhecimento.descConhecimento = '{}' inner join candidato_conhecimento on candidato_conhecimento.cpfCandidato = candidato.cpfCandidato and candidato_conhecimento.idConhecimento = conhecimento.idConhecimento".format(vars[x])
+            if x == "idioma":
+                query = query + " inner join idioma on idioma.descIdioma = '{}' inner join candidato_idioma on candidato_idioma.cpfCandidato = candidato.cpfCandidato and candidato_idioma.idIdioma = idioma.idIdioma".format(vars[x])
+            order = []
+            where = []
+            if x == "nivelEsc":
+                item = " where candidato.nivelEscolaridade = '{}'".format(vars[x])
+                item = 0
+            if x == "pcd":
+                if item == 0:
+                    item = " and candidato.pcdCandidato = {}".format(c["pcd"])
+                    query = query + item
+                else:
+                    item = " where candidato.pcdCandidato = {}".format(c["pcd"])
+                    query = query + item
+                    print(query)
+            if x == "vt":
+                if vars[x] == 0:
+                    query = query + " having distance <= 3"
+                else:
+                    query = query + " having distance > 3"
+            if x == "order":
+                for c in x:
+                    order.append(vars[c][x]) 
+                order = ','.join(order)
+                query = query + "order by "+ order
+
+        database = DatabaseManager()
+        result = database.Filtrar(query)
+        print(result)
+        return jsonify(result=result)
+
+    def listaCandidato(self):
+        database = DatabaseManager()
+        query = "select * from candidato"
+        result = database.Filtrar(query)
+        return jsonify(result = result)
+
+#UPDATE
+    def updateCandidato (self, vars, cpf):
+        database = DatabaseManager()
+        
+        for c in vars:
+            if c == "conhecimento":
+                for i in range(len(vars[c])):
+                    query ="INSERT INTO candidato_conhecimento (idConhecimento, cpfCandidato) VALUES ({}, '{}')".format(vars[c][i], cpf)
+                    database.Insert_Drop(query)
+
+        for c in vars:
+            if c == "idioma":
+                for i in range(len(vars[c])):
+                    query ="INSERT INTO candidato_idioma (idIdioma, cpfCandidato) VALUES ({}, '{}')".format(vars[c][i], cpf)
+                    database.Insert_Drop(query)
+
+        for c in vars:
+            if c == "experiencia":
+                for i in range(len(vars[c])):
+                    query ="INSERT INTO experiencia_profissional (empresa, cargo, cpfCandidato, tempo) VALUES ('{}', '{}', '{}', {})".format(vars[c][i]["empresa"], vars[c][i]["cargo"], cpf, vars[c][i]["tempo"])
+                    database.Insert_Drop(query)
+
+        for c in vars:
+            if c == "nomeCandidato":
+                query="UPDATE candidato SET nomeCandidato = '{}' WHERE cpfCandidato = '{}'".format(vars[c], cpf)
+                database.Insert_Drop(query)
+
+        for c in vars:
+            if c == "dataNascimentoCandidato":
+                query="UPDATE candidato SET dataNascimentoCandidato = {} WHERE cpfCandidato = '{}'".format(vars[c], cpf)
+                database.Insert_Drop(query)
+
+        for c in vars:
+            if c == "emailCandidato":
+                query="UPDATE candidato SET emailCandidato = '{}' WHERE cpfCandidato = '{}'".format(vars[c], cpf)
+                database.Insert_Drop(query)
+
+        for c in vars:
+            if c == "pcdCandidato":
+                query="UPDATE candidato SET pcdCandidato = {} WHERE cpfCandidato = '{}'".format(vars[c], cpf)
+                database.Insert_Drop(query)
+
+        for c in vars:
+            if c == "cepCandidato":
+                buscep= cepCoord(vars["cepCandidato"])
+                lat = buscep[0]
+                long = buscep[1]
+                query="UPDATE candidato SET cepCandidato = '{}', latitudeCandidato = {}, longitudeCandidato = {}  WHERE cpfCandidato = '{}'".format(vars[c], lat, long, cpf)
+                database.Insert_Drop(query)
+
+        for c in vars:
+            if c == "telResCandidato":
+                query="UPDATE candidato SET telResCandidato = '{}' WHERE cpfCandidato = '{}'".format(vars[c], cpf)
+                database.Insert_Drop(query)
+
+        for c in vars:
+            if c == "telCelCandidato":
+                query="UPDATE candidato SET telCelCandidato = '{}' WHERE cpfCandidato = '{}'".format(vars[c], cpf)
+                database.Insert_Drop(query)
+
+        for c in vars:
+            if c == "nivelEscolaridade":
+                query="UPDATE candidato SET nivelEscolaridade = '{}' WHERE cpfCandidato = '{}'".format(vars[c], cpf)
+                database.Insert_Drop(query)
+```
