@@ -234,20 +234,6 @@ https://developers.google.com/chart/interactive/docs/gallery/ganttchart
 </p
 
 
-
-### :heavy_check_mark: Entregas e Vídeos <a name="-entregas"/></a>
-
-
-|  DATA  | SPRINT | Link do vídeo|
-|--------|--------|--------------|
-|  27-09 |   0    |       -       |
-|  18-10 |   1    |[Video](https://www.youtube.com/watch?v=hSxAHHQWt9Q&feature=youtu.be)              |
-|  08-11 |   2    |[Video](https://www.youtube.com/watch?v=6RoibaiDX_k&feature=youtu.be)              |
-|  29-11 |   3    |[Video](https://youtu.be/us_hd_7H2kc)     |
-|  14-12 |   4    |[Video](https://youtu.be/pS3nGC5DPVQ)|
-
-
-
 ### :page_with_curl: Sobre o projeto <a name="-sobre"/></a>
 
 > É proposto o desenvolvimento de um Sistema de Recompensas dentro de uma aplicação do cliente. O cliente busca otimizar seu negócio através de uma dashbord, com as informações mais atrativas e impactantes para seus clientes. O cliente pode acompanhar seus respectivos dados de maneira segura e organizada, e caso necessário, e tomar a decisões a partir delas.
