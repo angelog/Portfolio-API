@@ -610,17 +610,6 @@ As escolhas das tecnologias foram baseadas em performance e redução de complex
 As bibliotecas utilizadas facilitaram na comunicação com o banco de dados, assim como cálculos de localização e aproximação dos candidatos. 
 
 
-## Instruções de implementação </br> <a name="-instrucao"/></a>
-
- > Crie o banco de dados 
- 1. Utilizar o script SQL que está na pasta "API-Loading/projetointegrador/bd/bd.sql" para ter o modelo do banco.
- 
- > Como rodar a aplicação:
- 1. Alterar as configurações do banco de dados nos arquivos "bd.py" e "app.py"
- 2. Para [configurar e executar o ambiente virtual](https://www.youtube.com/watch?v=hA2l0TgaZhM), a pasta do ambiente virtual criado para este projeto se encontra na pasta "venv" 
- 4. Com o ambiente virtual ativado execute o arquivo "app.py"
- 5. Recomendamos que utilize o software [Postman](https://www.postman.com/downloads/) para testar a rotas disponiveis no projeto.
-
 # Requisitos</br> <a name="-requisitos"/></a>
 ## Requisitos Funcionais</br>
 
