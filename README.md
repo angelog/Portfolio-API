@@ -1,4 +1,4 @@
-# PostifolioAPI
+# Portifolio API
 # Gabriel Angelo Bezerra
 
 ## Introdução
